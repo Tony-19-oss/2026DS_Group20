@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>尋知 — 網路搜尋</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<main class="page">
+    <header class="topbar">
+        <a class="brand" th:href="@{/}" aria-label="尋知首頁">
+            <span class="brand-mark">S</span>
+            <span>尋知</span>
+        </a>
+        <span class="powered-by">POWERED BY TAVILY</span>
+    </header>
+
+    <section class="hero">
+        <p class="eyebrow">探索值得信賴的資訊</p>
+        <h1>好奇心，<span>從搜尋開始。</span></h1>
+        <p class="intro">輸入關鍵字，快速探索網路上的相關內容。</p>
+
+        <form class="search-form" method="get" th:action="@{/}">
+            <label class="sr-only" for="query">搜尋關鍵字</label>
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="query" name="q" type="search" placeholder="今天想找些什麼？"
+                   autocomplete="off" maxlength="200" th:value="${query}">
+            <button type="submit">搜尋 <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="hint">試試看：人工智慧、台灣旅遊、永續生活</p>
+    </section>
+
+    <section class="results" aria-live="polite" th:if="${query != null and !query.isEmpty()}">
+        <div class="results-heading">
+            <div>
+                <p class="eyebrow">SEARCH RESULTS</p>
+                <h2>「<span th:text="${query}"></span>」的搜尋結果</h2>
+            </div>
+            <span class="result-count" th:if="${searched}"
+                  th:text="${#lists.size(results)} + ' 個結果'"></span>
+        </div>
+
+        <div class="notice error" th:if="${error}" th:text="${error}"></div>
+        <div class="notice" th:if="${searched and #lists.isEmpty(results)}">
+            沒有找到相關結果，試試其他關鍵字吧。
+        </div>
+
+        <article class="result-card" th:each="result : ${results}">
+            <a class="result-title" th:href="${result.url}" target="_blank" rel="noopener noreferrer"
+               th:text="${result.title}"></a>
+            <a class="result-url" th:href="${result.url}" target="_blank" rel="noopener noreferrer"
+               th:text="${result.url}"></a>
+            <p class="result-content" th:if="${result.content != null and !result.content.isBlank()}"
+               th:text="${result.content}"></p>
+        </article>
+    </section>
+
+    <footer>以好奇心為起點，發現更多可能。</footer>
+</main>
+</body>
+</html>
